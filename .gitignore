@@ -1,0 +1,9 @@
+*.h5
+/env/*
+/env
+/models/*.h5
+/images
+.idea
+/uploads
+/uploads/*
+/images/*/*

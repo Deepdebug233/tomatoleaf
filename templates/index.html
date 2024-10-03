@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomato Leaf Classification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        input[type="file"], select {
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        video, canvas {
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tomato Leaf Classification</h1>
+    <p>Upload an image of a tomato leaf or capture one from the camera to classify it.</p>
+
+    <!-- File Upload -->
+    <form id="upload-form" action="/" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*">
+        <br>
+        <label for="model">Choose a disease classification model:</label>
+        <select name="model" id="model" required>
+            <option value="disease_model_1">Model 1 (Tomato Disease Classification)</option>
+            <option value="disease_model_2">Model 2 (VGG Tomato Disease Model)</option>
+        </select>
+        <br>
+        <button type="submit"><i class="fas fa-upload"></i> Upload</button>
+    </form>
+
+    <hr>
+
+    <!-- Video Capture -->
+    <h2>Or capture an image from your camera</h2>
+    <video id="video" width="320" height="240" autoplay></video>
+    <button id="capture-btn"><i class="fas fa-camera"></i> Capture Image</button>
+    <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+
+    <form id="capture-form" action="/" method="POST" enctype="multipart/form-data" style="display: none;">
+        <input type="hidden" name="captured_image" id="captured-image">
+        <input type="hidden" name="model" value="disease_model_1" id="capture-model">
+        <button type="submit">Submit Captured Image</button>
+    </form>
+
+    <script>
+        // Access the video stream from the camera
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture-btn');
+        const captureForm = document.getElementById('capture-form');
+        const capturedImageInput = document.getElementById('captured-image');
+        const captureModelSelect = document.getElementById('capture-model');
+
+        // Access the camera
+        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+            video.srcObject = stream;
+        }).catch(err => {
+            console.error("Error accessing the camera: ", err);
+        });
+
+        // Capture the image
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageDataURL = canvas.toDataURL('image/png');  // Get the captured image as a base64 data URL
+            capturedImageInput.value = imageDataURL;
+
+            // Also set the selected model in the hidden form
+            captureModelSelect.value = document.getElementById('model').value;
+
+            // Show the form and submit the captured image
+            captureForm.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
